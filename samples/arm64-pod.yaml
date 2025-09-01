@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-arm64
+spec:
+  containers:
+    - name: hello
+      image: arm64v8/alpine:3.18
+      command: ["sh", "-c", "echo Hello from ARM64 node && sleep 3600"]
+  nodeSelector:
+    kubernetes.io/arch: arm64
+  restartPolicy: Never

@@ -1,0 +1,18 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: ec2graviton
+spec:
+  amiFamily: AL2023
+  amiSelectorTerms:
+    - alias: "al2023@v20250821"
+  role: arn:aws:iam::<aws-cloud-id>:role/karpenter-demo-eks-node-role # Add your AWS Cloud Id
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: karpenter-demo
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: karpenter-demo
+  metadataOptions:
+    httpEndpoint: enabled
+    httpTokens: optional # change to required for prod environment
