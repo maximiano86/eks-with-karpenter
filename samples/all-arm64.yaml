@@ -1,3 +1,4 @@
+# Enable ALB Ingress Controller before applying this
 apiVersion: apps/v1
 kind: Deployment
 metadata:
