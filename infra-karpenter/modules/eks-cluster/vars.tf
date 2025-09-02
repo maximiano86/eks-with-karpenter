@@ -27,3 +27,9 @@ variable "init" {
   type        = bool
   description = "Create init/boostrap worker node with karpenter tags"
 }
+
+variable "region" {
+  type        = string
+  description = "AWS Region"
+  default     = "us-east-1"
+}

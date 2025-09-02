@@ -18,7 +18,11 @@ resource "aws_subnet" "public" {
   availability_zone       = each.key
   map_public_ip_on_launch = true
 
-  tags = var.tags
+  tags = merge(var.tags, {
+    Name                                    = "${var.prefix_name}-public-${each.key}"
+    "kubernetes.io/role/elb"                = "1"
+    "kubernetes.io/cluster/${var.eks_name}" = "shared"
+  })
 }
 
 resource "aws_subnet" "private" {

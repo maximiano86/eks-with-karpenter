@@ -56,7 +56,7 @@ This PoC was built and validated using following versions:
 - **Karpenter Helm chart:** 1.6.2
 - **Terraform:** v1.13.0
 - **AWS CLI:** 2.28.19
-- **Helm:** 3.x
+- **Helm:** v3.9.0
 - **kubectl:** v1.32.2
 
 Other versions may work, but compatibility is not guaranteed.
@@ -185,7 +185,7 @@ Expected Output:
 ### Cleanup
 To destroy all resources created by this PoC, run:
 ```
-terraform destroy -var-file=__helpers/values/terraform.tfvars
+terraform destroy -var-file=values/terraform.tfvars
 ```
 
 ### References
