@@ -24,9 +24,11 @@ variable "vpc_id" {
 }
 
 variable "aws_subnet_public" {
-
+  type        = list(any)
+  description = "Public Subnets for Internet Facing ALB's"
 }
 
 variable "aws_subnet_private" {
-
+  type        = list(any)
+  description = "Private Subnets for Internet Facing ALB's"
 }

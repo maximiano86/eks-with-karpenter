@@ -23,3 +23,9 @@ variable "env" {
   type        = string
   description = "Environment can be dev, uat, prod"
 }
+
+variable "alb_controller" {
+  type        = bool
+  default     = false
+  description = "Deploy ALB Ingress Controller or Not"
+}

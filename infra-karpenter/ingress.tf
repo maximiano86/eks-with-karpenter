@@ -1,4 +1,5 @@
 module "ingress" {
+  count  = var.alb_controller ? 1 : 0
   source = "./modules/ingress-alb"
 
   providers = {

@@ -73,7 +73,7 @@ terraform init
 terraform plan -var-file=values/terraform.tfvars
 terraform apply -var-file=values/terraform.tfvars
 ```
-**Important:** If `terraform apply` fails during the Karpenter Helm chart installation with an error like the one below, simply rerun the command without making any changes:
+**Important:** If `terraform apply` fails during Helm chart installation with an error like the one below, simply rerun the command without making any changes:
 ```
 │ Kubernetes cluster unreachable: the server has asked for the client to provide credentials
 ```
