@@ -13,8 +13,10 @@ This repository contains a proof-of-concept EKS cluster setup using **Karpenter*
 - **NAT Gateway:** To enable private subnets to access the internet securely (e.g., for pulling container images).
 - **Public Route Table:** To route traffic from public subnets to the internet. 
 - **Private Route Table:** To route traffic from private subnets through the NAT Gateway.
+- **ALB Security Group:** To allow inbound HTTP/HTTPS traffic and outbound access for the Application Load Balancer.
+- **EKS Security Gourp:** To allow communication between worker nodes and the control plane, kubelet API access, and outbound internet traffic.
 
-### IAM - EKS & ALB
+### IAM for EKS & ALB
 - **Cluster IAM Role:** To allow EKS to manage control plane operations via sts:**AssumeRole.
 - **Cluster IAM Policy:** To attach AmazonEKSClusterPolicy for control plane permissions.
 - **Node IAM Role:** To allow EC2 instances (managed by Karpenter or Node Groups) to join the cluster.
