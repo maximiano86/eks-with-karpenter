@@ -14,7 +14,7 @@ This repository contains a proof-of-concept EKS cluster setup using **Karpenter*
 - **Public Route Table:** To route traffic from public subnets to the internet. 
 - **Private Route Table:** To route traffic from private subnets through the NAT Gateway.
 
-### IAM & EKS
+### IAM - EKS & ALB
 - **Cluster IAM Role:** To allow EKS to manage control plane operations via sts:**AssumeRole.
 - **Cluster IAM Policy:** To attach AmazonEKSClusterPolicy for control plane permissions.
 - **Node IAM Role:** To allow EC2 instances (managed by Karpenter or Node Groups) to join the cluster.
@@ -24,8 +24,12 @@ This repository contains a proof-of-concept EKS cluster setup using **Karpenter*
   - AmazonEKS_CNI_Policy
   - AmazonSSMManagedInstanceCore
 - **Node Instance Profile:** To bind the IAM role to EC2 instances launched by Karpenter or EKS Node Groups.
+- **ALB IAM Policy:** To define the permissions required by the AWS Load Balancer Controller.
+- **ALB Assume Role Policy Document:** To allow the EKS OIDC provider to assume the ALB controller role.
+- **ALB IAM Role:** To grant the AWS Load Balancer Controller access to AWS resources.
 
-### EKS & Karpenter
+
+### EKS, Karpenter & ALB
 - **EKS Cluster:** To provision the Kubernetes control plane with logging, subnet config, and security groups.
 - **EKS Init Node Group:** To bootstrap the cluster with initial capacity before Karpenter takes over.
 - **Cluster Security Group:** To allow secure communication between control plane and worker nodes.
@@ -34,10 +38,11 @@ This repository contains a proof-of-concept EKS cluster setup using **Karpenter*
 - **Karpenter Controller Role:** To define the IAM role assumed by the Karpenter controller pod.
 - **Karpenter Controller Policy:** To grant permissions for managing EC2, IAM, and EKS resources required for provisioning nodes.
 - **IAM Role Attachment:** To bind the custom policy to the Karpenter controller role.
-- **Helm Release:** To install Karpenter in the cluster using a local Helm chart, with IRSA annotations and RBAC enabled.
+- **Helm Release (Karpenter):** To install Karpenter in the cluster using a local Helm chart, with IRSA annotations and RBAC enabled.
 - **EC2NodeClass:** To define launch parameters for Karpenter-managed EC2 instances, including AMI, IAM role, subnet and security group selectors.
 - **NodePool:** To configure dynamic provisioning of ARM64 spot instances using the defined EC2NodeClass, with constraints on architecture, capacity type, instance category, and generation.
 - **Test Pod:** To validate ARM64 provisioning by scheduling a simple container on a Karpenter-managed node.
+- **Helm Release (ALB Controller):** To deploy the AWS Load Balancer Controller into the EKS cluster using Helm.
 
 ## Known Issues
 1. Due to limitations in the Terraform Helm provider, OCI charts cannot be installed directly via `helm_release`. As a workaround, the chart must be manually downloaded before applying the module.
