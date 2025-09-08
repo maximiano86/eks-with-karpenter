@@ -101,7 +101,7 @@ kubectl -n karpenter logs deployment/karpenter -f
 #### 3. Deploy a test ARM64 pod
 ```
 cd ../samples
-kubectl apply -f arm64-pod.yaml
+kubectl apply -f sinlge-pod-arm64.yaml
 kubectl get pods -w
 ```
 The pod should schedule on an ARM64 node provisioned by Karpenter based on nodeSelector label:
