@@ -23,7 +23,18 @@ variable "worker_node_cidrs" {
   description = "CIDR blocks allowed to communicate with control plane"
 }
 
-variable "init" {
-  type        = bool
-  description = "Create init/boostrap worker node with karpenter tags"
+variable "region" {
+  type        = string
+  description = "AWS Region"
+  default     = "us-east-1"
+}
+
+variable "eks_node_groups" {
+  type = map(object({
+    desired_size   = number
+    max_size       = number
+    min_size       = number
+    instance_types = list(string)
+  }))
+  default = {}
 }

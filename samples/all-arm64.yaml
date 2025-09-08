@@ -1,0 +1,65 @@
+# Enable ALB Ingress Controller before applying this
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-arm64
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-arm64
+  template:
+    metadata:
+      labels:
+        app: nginx-arm64
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+      containers:
+        - name: nginx
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apk add --no-cache curl &&
+              INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id) &&
+              INSTANCE_TYPE=$(curl -s http://169.254.169.254/latest/meta-data/instance-type) &&
+              INSTANCE_LIFECYCLE=$(curl -s http://169.254.169.254/latest/meta-data/instance-life-cycle) &&
+              echo "<html><body><h1>Instance Info</h1><ul><li>ID: $INSTANCE_ID</li><li>Type: $INSTANCE_TYPE</li><li>Lyfe Cycle: $INSTANCE_LIFECYCLE</li></ul></body></html>" > /usr/share/nginx/html/index.html &&
+              nginx -g "daemon off;"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-arm64-svc
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: nginx-arm64
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-arm64-ingress
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /nginx
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-arm64-svc
+                port:
+                  number: 80
