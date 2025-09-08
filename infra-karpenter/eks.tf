@@ -10,7 +10,8 @@ module "eks_cluster" {
   subnet_ids        = module.networking.private_subnet_ids
   worker_node_cidrs = values(module.networking.private_subnet_cidrs)
 
-  init = true
+  eks_node_groups = var.eks_node_groups
+
 
   tags = {
     Component = "EKS"

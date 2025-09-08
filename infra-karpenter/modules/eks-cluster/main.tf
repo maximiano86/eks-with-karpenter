@@ -16,21 +16,21 @@ resource "aws_eks_cluster" "this" {
   depends_on = [aws_iam_role_policy_attachment.cluster_policy]
 }
 
-resource "aws_eks_node_group" "init" {
-  count = var.init ? 1 : 0
+resource "aws_eks_node_group" "this" {
+  for_each = var.eks_node_groups
 
   cluster_name    = aws_eks_cluster.this.name
-  node_group_name = "${var.name}-init"
+  node_group_name = "${var.name}-${each.key}"
   node_role_arn   = aws_iam_role.node.arn
   subnet_ids      = var.subnet_ids
 
   scaling_config {
-    desired_size = 2
-    max_size     = 2
-    min_size     = 1
+    desired_size = each.value.desired_size
+    max_size     = each.value.max_size
+    min_size     = each.value.min_size
   }
 
-  instance_types = ["t3.medium"]
+  instance_types = each.value.instance_types
 
   tags = merge(var.tags, {
     "karpenter.sh/discovery" = var.name
