@@ -59,3 +59,19 @@ variable "sns_subscriptions" {
   type        = list(string)
   description = "List of email to subscribe to SNS"
 }
+
+variable "alb_controller" {
+  type        = bool
+  default     = false
+  description = "Deploy ALB Ingress Controller or Not"
+}
+
+variable "eks_node_groups" {
+  type = map(object({
+    desired_size   = number
+    max_size       = number
+    min_size       = number
+    instance_types = list(string)
+  }))
+  default = {}
+}

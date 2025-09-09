@@ -38,7 +38,6 @@ This repository contains a proof-of-concept EKS cluster setup using **Karpenter*
 - **EventBridge Target to SNS:** To route captured events to the SNS topic for human notifications.
 - **SNS Topic Policy:** To allow EventBridge to publish messages to the SNS topic.
 
-
 ### EKS, Karpenter & ALB
 - **EKS Cluster:** To provision the Kubernetes control plane with logging, subnet config, and security groups.
 - **EKS Init Node Group:** To bootstrap the cluster with initial capacity before Karpenter takes over.
