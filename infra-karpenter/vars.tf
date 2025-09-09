@@ -13,7 +13,6 @@ variable "private_subnet_cidrs" {
   description = "List of CIDR blocks for the private subnets (e.g., [\"10.0.101.0/24\", \"10.0.102.0/24\"])."
 }
 
-
 variable "prefix_name" {
   type        = string
   description = "Prefix for resources"
@@ -22,6 +21,11 @@ variable "prefix_name" {
 variable "eks_name" {
   type        = string
   description = "EKS cluster name"
+}
+
+variable "eks_version" {
+  type        = string
+  description = "Defines the EKS version"
 }
 
 variable "region" {
@@ -33,11 +37,6 @@ variable "region" {
 variable "karpenter_helm" {
   type        = string
   description = "Karpenter file name with path"
-}
-
-variable "env" {
-  type        = string
-  description = "Environment can be dev, uat, prod"
 }
 
 variable "alb_controller" {
@@ -54,4 +53,9 @@ variable "eks_node_groups" {
     instance_types = list(string)
   }))
   default = {}
+}
+
+variable "sns_subscriptions" {
+  type        = list(string)
+  description = "List of email to subscribe to SNS"
 }

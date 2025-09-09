@@ -9,7 +9,7 @@ resource "helm_release" "karpenter" {
     yamlencode({
       settings = {
         clusterName           = var.cluster_name
-        interruptionQueueName = var.cluster_name
+        interruptionQueueName = aws_sqs_queue.karpenter_events.name
         aws                   = { region = "us-east-1" }
       }
       serviceAccount = {

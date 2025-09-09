@@ -43,3 +43,8 @@ variable "region" {
   description = "AWS region for eks/karpenter"
   default     = "us-east-1"
 }
+
+variable "sns_subscriptions" {
+  type        = list(string)
+  description = "List of email to subscribe to SNS"
+}

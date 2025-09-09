@@ -11,11 +11,12 @@ private_subnet_cidrs = {
   "us-east-1c" = "10.0.103.0/24"
   "us-east-1d" = "10.0.104.0/24"
 }
-prefix_name    = "eks"
-eks_name       = "karpenter-demo"
-karpenter_helm = "./karpenter-1.6.2.tgz"
-env            = "poc"
-alb_controller = true # Change to true if you want to deploy ALB Ingress Controller
+sns_subscriptions = ["maximiano.alejandro@gmail.com"] #"email@something.com"]
+prefix_name       = "eks"
+eks_name          = "karpenter-demo"
+eks_version       = "1.33"
+karpenter_helm    = "./karpenter-1.6.2.tgz"
+alb_controller    = false # Change to true if you want to deploy ALB Ingress Controller
 eks_node_groups = {
   bootstrap = {
     desired_size   = 2

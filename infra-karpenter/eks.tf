@@ -6,6 +6,7 @@ module "eks_cluster" {
   }
 
   name              = var.eks_name
+  eks_version       = var.eks_version
   vpc_id            = module.networking.vpc_id
   subnet_ids        = module.networking.private_subnet_ids
   worker_node_cidrs = values(module.networking.private_subnet_cidrs)

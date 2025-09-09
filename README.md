@@ -29,6 +29,14 @@ This repository contains a proof-of-concept EKS cluster setup using **Karpenter*
 - **ALB IAM Policy:** To define the permissions required by the AWS Load Balancer Controller.
 - **ALB Assume Role Policy Document:** To allow the EKS OIDC provider to assume the ALB controller role.
 - **ALB IAM Role:** To grant the AWS Load Balancer Controller access to AWS resources.
+- **SQS Queue:** To receive EC2 spot/instance event notifications for Karpenter.
+- **SQS Queue Policy:** To allow EventBridge to send messages to the SQS queue.
+- **SNS Topic:** To notify humans about EC2 spot/instance events.
+- **SNS Topic Subscription:** To send email notifications to subscribed users.
+- **EventBridge Rule:** To capture EC2 Spot interruption, instance rebalance, and maintenance events.
+- **EventBridge Target to SQS:** To route captured events to the SQS queue for Karpenter.
+- **EventBridge Target to SNS:** To route captured events to the SNS topic for human notifications.
+- **SNS Topic Policy:** To allow EventBridge to publish messages to the SNS topic.
 
 
 ### EKS, Karpenter & ALB
@@ -98,10 +106,10 @@ Check karpenter logs:
 ```
 kubectl -n karpenter logs deployment/karpenter -f
 ```
-#### 3. Deploy a test ARM64 pod
+#### 3. Apply a ARM64 deployment
 ```
 cd ../samples
-kubectl apply -f sinlge-pod-arm64.yaml
+kubectl apply -f deploy-arm64.yaml
 kubectl get pods -w
 ```
 The pod should schedule on an ARM64 node provisioned by Karpenter based on nodeSelector label:

@@ -13,6 +13,8 @@ module "karpenter" {
   oidc_provider_url     = module.eks_cluster.oidc_provider_url
   karpenter_helm        = var.karpenter_helm
 
+  sns_subscriptions = var.sns_subscriptions
+
   tags = {
     Component = "Karpenter"
   }
