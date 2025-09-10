@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-arm64
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-arm64
+  template:
+    metadata:
+      labels:
+        app: hello-arm64
+    spec:
+      # Ensure the pod schedules on ARM64 nodes
+      nodeSelector:
+        kubernetes.io/arch: arm64
+
+      containers:
+        - name: hello
+          image: arm64v8/alpine:3.18
+          command: ["sh", "-c", "echo Hello from ARM64 node && sleep 3600"]
+
+      restartPolicy: Always

@@ -3,6 +3,11 @@ variable "name" {
   description = "Name prefix for resources"
 }
 
+variable "eks_version" {
+  type        = string
+  description = "Defines the EKS version"
+}
+
 variable "tags" {
   type        = map(string)
   description = "Common tags for all resources"
