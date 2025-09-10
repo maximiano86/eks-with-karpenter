@@ -80,7 +80,6 @@ Other versions may work, but compatibility is not guaranteed.
 #### 1. Terraform Provisioning Steps
 ```
 cd infra-karpenter
-helm pull oci://public.ecr.aws/karpenter/karpenter --version 1.6.2
 terraform init
 terraform plan -var-file=values/terraform.tfvars
 terraform apply -var-file=values/terraform.tfvars

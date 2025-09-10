@@ -3,8 +3,7 @@ module "ingress" {
   source = "./modules/ingress-alb"
 
   providers = {
-    helm       = helm
-    kubernetes = kubernetes
+    helm = helm
   }
 
   cluster_name       = module.eks_cluster.cluster_name
