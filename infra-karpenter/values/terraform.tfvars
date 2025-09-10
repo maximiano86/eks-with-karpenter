@@ -11,7 +11,7 @@ private_subnet_cidrs = {
   "us-east-1c" = "10.0.103.0/24"
   "us-east-1d" = "10.0.104.0/24"
 }
-sns_subscriptions       = ["maximiano.alejandro@gmail.com"] #["email@something.com"]
+sns_subscriptions       = ["name@something.com"]
 prefix_name             = "eks"
 eks_name                = "karpenter-demo"
 eks_version             = "1.33"
