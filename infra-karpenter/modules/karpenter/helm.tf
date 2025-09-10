@@ -1,9 +1,16 @@
+# Get user/token to pull helm chart
+data "aws_ecrpublic_authorization_token" "token" {}
+
 # Install Karpenter using the locally downloaded .tgz chart file
 resource "helm_release" "karpenter" {
-  name             = "karpenter"
-  chart            = var.karpenter_helm # local .tgz
-  namespace        = "karpenter"
-  create_namespace = true
+  name                = "karpenter"
+  repository          = "oci://public.ecr.aws/karpenter"
+  repository_username = data.aws_ecrpublic_authorization_token.token.user_name
+  repository_password = data.aws_ecrpublic_authorization_token.token.password
+  version             = var.karpenter_chart_version
+  chart               = "karpenter"
+  namespace           = "karpenter"
+  create_namespace    = true
 
   values = [
     yamlencode({

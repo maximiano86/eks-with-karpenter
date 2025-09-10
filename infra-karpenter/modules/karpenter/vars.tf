@@ -33,11 +33,6 @@ variable "node_arn" {
   description = "Node role for Karpenter"
 }
 
-variable "karpenter_helm" {
-  type        = string
-  description = "Karpenter file name with path"
-}
-
 variable "region" {
   type        = string
   description = "AWS region for eks/karpenter"
@@ -47,4 +42,9 @@ variable "region" {
 variable "sns_subscriptions" {
   type        = list(string)
   description = "List of email to subscribe to SNS"
+}
+
+variable "karpenter_chart_version" {
+  type        = string
+  description = "Karpenter Helm Chart version"
 }

@@ -40,6 +40,7 @@ resource "aws_cloudwatch_event_rule" "karpenter_interruption" {
   event_pattern = jsonencode({
     "source" : ["aws.ec2"],
     "detail-type" : [
+      "AWS Health Event",
       "EC2 Spot Instance Interruption Warning",
       "EC2 Instance Rebalance Recommendation",
       "EC2 Instance State-change Notification",

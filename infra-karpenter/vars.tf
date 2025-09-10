@@ -34,11 +34,6 @@ variable "region" {
   default     = "us-east-1"
 }
 
-variable "karpenter_helm" {
-  type        = string
-  description = "Karpenter file name with path"
-}
-
 variable "alb_controller" {
   type        = bool
   default     = false
@@ -60,18 +55,7 @@ variable "sns_subscriptions" {
   description = "List of email to subscribe to SNS"
 }
 
-variable "alb_controller" {
-  type        = bool
-  default     = false
-  description = "Deploy ALB Ingress Controller or Not"
-}
-
-variable "eks_node_groups" {
-  type = map(object({
-    desired_size   = number
-    max_size       = number
-    min_size       = number
-    instance_types = list(string)
-  }))
-  default = {}
+variable "karpenter_chart_version" {
+  type        = string
+  description = "Karpenter Helm Chart version"
 }
