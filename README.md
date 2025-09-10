@@ -38,6 +38,7 @@ This repository contains a proof-of-concept EKS cluster setup using **Karpenter*
 - **EventBridge Target to SNS:** To route captured events to the SNS topic for human notifications.
 - **SNS Topic Policy:** To allow EventBridge to publish messages to the SNS topic.
 
+
 ### EKS, Karpenter & ALB
 - **EKS Cluster:** To provision the Kubernetes control plane with logging, subnet config, and security groups.
 - **EKS Init Node Group:** To bootstrap the cluster with initial capacity before Karpenter takes over.
@@ -52,9 +53,6 @@ This repository contains a proof-of-concept EKS cluster setup using **Karpenter*
 - **NodePool:** To configure dynamic provisioning of ARM64 spot instances using the defined EC2NodeClass, with constraints on architecture, capacity type, instance category, and generation.
 - **Test Pod:** To validate ARM64 provisioning by scheduling a simple container on a Karpenter-managed node.
 - **Helm Release (ALB Controller):** To deploy the AWS Load Balancer Controller into the EKS cluster using Helm.
-
-## Known Issues
-1. Due to limitations in the Terraform Helm provider, OCI charts cannot be installed directly via `helm_release`. As a workaround, the chart must be manually downloaded before applying the module.
 
 ## Prerequisites
 - AWS CLI
@@ -86,10 +84,6 @@ helm pull oci://public.ecr.aws/karpenter/karpenter --version 1.6.2
 terraform init
 terraform plan -var-file=values/terraform.tfvars
 terraform apply -var-file=values/terraform.tfvars
-```
-**Important:** If `terraform apply` fails during Helm chart installation with an error like the one below, simply rerun the command without making any changes:
-```
-│ Kubernetes cluster unreachable: the server has asked for the client to provide credentials
 ```
 #### 2. Deploy Karpenter Manifests
 ```
