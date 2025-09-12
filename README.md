@@ -4,55 +4,73 @@ This repository contains a proof-of-concept EKS cluster setup using **Karpenter*
 
 ## What you'll get
 
-### Networking
-- **VPC:** To create an isolated private network for our infrastructure stack.
-- **Internet Gateway:** To allow public subnets to access the internet.
-- **Public Subnets:** To host internet-facing resources (e.g., NAT Gateway, Load Balancers).
-- **Private Subnets:** To host internal workloads like EKS nodes and Karpenter-managed instances.
-- **Elastic IP:** To allocate a static public IP for the NAT Gateway.
-- **NAT Gateway:** To enable private subnets to access the internet securely (e.g., for pulling container images).
-- **Public Route Table:** To route traffic from public subnets to the internet. 
-- **Private Route Table:** To route traffic from private subnets through the NAT Gateway.
-- **ALB Security Group:** To allow inbound HTTP/HTTPS traffic and outbound access for the Application Load Balancer.
-- **EKS Security Gourp:** To allow communication between worker nodes and the control plane, kubelet API access, and outbound internet traffic.
+### Networking and Subnets
 
-### IAM for EKS & ALB
-- **Cluster IAM Role:** To allow EKS to manage control plane operations via sts:**AssumeRole.
-- **Cluster IAM Policy:** To attach AmazonEKSClusterPolicy for control plane permissions.
-- **Node IAM Role:** To allow EC2 instances (managed by Karpenter or Node Groups) to join the cluster.
-- **Node IAM Policies:** To attach required policies for networking, registry access, and SSM:
-  - AmazonEKSWorkerNodePolicy
-  - AmazonEC2ContainerRegistryReadOnly
-  - AmazonEKS_CNI_Policy
-  - AmazonSSMManagedInstanceCore
-- **Node Instance Profile:** To bind the IAM role to EC2 instances launched by Karpenter or EKS Node Groups.
-- **ALB IAM Policy:** To define the permissions required by the AWS Load Balancer Controller.
-- **ALB Assume Role Policy Document:** To allow the EKS OIDC provider to assume the ALB controller role.
-- **ALB IAM Role:** To grant the AWS Load Balancer Controller access to AWS resources.
-- **SQS Queue:** To receive EC2 spot/instance event notifications for Karpenter.
-- **SQS Queue Policy:** To allow EventBridge to send messages to the SQS queue.
-- **SNS Topic:** To notify humans about EC2 spot/instance events.
-- **SNS Topic Subscription:** To send email notifications to subscribed users.
-- **EventBridge Rule:** To capture EC2 Spot interruption, instance rebalance, and maintenance events.
-- **EventBridge Target to SQS:** To route captured events to the SQS queue for Karpenter.
-- **EventBridge Target to SNS:** To route captured events to the SNS topic for human notifications.
-- **SNS Topic Policy:** To allow EventBridge to publish messages to the SNS topic.
+- **VPC:** Creates an isolated private network for the infrastructure stack.
+- **Internet Gateway:** Enables public subnets to access the internet.
+- **Elastic IP (EIP):** Static public IP for the NAT Gateway.
+- **NAT Gateway:** Allows private subnets to access the internet securely.
+- **Public Subnet:** Internet-facing subnets for load balancers or public resources.
+- **Private Subnet:** Internal subnets for EKS nodes or databases, without direct internet access.
+- **Route Table (Public):** Routing table for public subnets with internet access.
+- **Route Table (Private):** Routing table for private subnets with NAT access.
+- **Route (Public Internet):** Route from public subnets to the Internet Gateway.
+- **Route (Private NAT):** Route from private subnets to the NAT Gateway.
+- **Route Table Association (Public):** Associates public subnets with their route table.
+- **Route Table Association (Private):** Associates private subnets with their route table.
 
+---
 
-### EKS, Karpenter & ALB
-- **EKS Cluster:** To provision the Kubernetes control plane with logging, subnet config, and security groups.
-- **EKS Init Node Group:** To bootstrap the cluster with initial capacity before Karpenter takes over.
-- **Cluster Security Group:** To allow secure communication between control plane and worker nodes.
-- **OIDC Provider:** To establish a trust relationship between EKS and IAM roles via OpenID Connect, enabling IRSA (IAM Roles for Service Accounts).
-- **IAM Trust Policy:** To allow Karpenter’s service account to assume its IAM role via OIDC (sts:AssumeRoleWithWebIdentity).
-- **Karpenter Controller Role:** To define the IAM role assumed by the Karpenter controller pod.
-- **Karpenter Controller Policy:** To grant permissions for managing EC2, IAM, and EKS resources required for provisioning nodes.
-- **IAM Role Attachment:** To bind the custom policy to the Karpenter controller role.
-- **Helm Release (Karpenter):** To install Karpenter in the cluster using a local Helm chart, with IRSA annotations and RBAC enabled.
+### EKS Cluster and Node Groups
+
+- **IAM Role (Cluster):** IAM role for the EKS control plane.
+- **IAM Policy Attachment (Cluster):** Attaches the AmazonEKSClusterPolicy to the cluster role.
+- **IAM Role (Node):** IAM role for EC2 nodes managed by Karpenter.
+- **IAM Instance Profile (Node):** EC2 instance profile for worker nodes.
+- **IAM Policy Attachments (Node):** Grants node permissions: EKSWorkerNodePolicy, EKS_CNI_Policy, ECRReadOnly, SSM.
+- **EKS Cluster:** Creates the EKS cluster with public/private access and logging enabled.
+- **EKS Addon (Pod Identity):** Installs the pod identity agent for IAM roles via service accounts.
+- **AMI Data Source:** Fetches the latest official EKS AMI for worker nodes.
+- **Launch Template (Karpenter):** EC2 launch template for Karpenter-managed nodes.
+- **EKS Node Group:** Managed node groups with autoscaling and custom launch template.
+- **Security Group (Cluster):** Allows communication between nodes and control plane (ports 443, 10250).
+
+---
+
+### Karpenter Controller
+
+- **IAM Role (Karpenter Controller):** IAM role for the Karpenter controller using Pod Identity.
+- **IAM Policy (Karpenter Controller):** Custom policy with permissions for EC2, IAM, EKS, SQS.
+- **IAM Policy Attachment:** Attaches the custom policy to the controller role.
+- **Pod Identity Association:** Binds the IAM role to the Karpenter service account.
+- **Helm Release (Karpenter):** Installs Karpenter via Helm with custom values.
 - **EC2NodeClass:** To define launch parameters for Karpenter-managed EC2 instances, including AMI, IAM role, subnet and security group selectors.
 - **NodePool:** To configure dynamic provisioning of ARM64 spot instances using the defined EC2NodeClass, with constraints on architecture, capacity type, instance category, and generation.
-- **Test Pod:** To validate ARM64 provisioning by scheduling a simple container on a Karpenter-managed node.
-- **Helm Release (ALB Controller):** To deploy the AWS Load Balancer Controller into the EKS cluster using Helm.
+- **Test Deploy:** To validate ARM64 provisioning by scheduling a simple container on a Karpenter-managed node.
+
+---
+
+### Events and Notifications
+
+- **SQS Queue (Karpenter Events):** Queue for EC2 interruption and rebalance events.
+- **SQS Queue Policy:** Allows EventBridge to send messages to the queue.
+- **SNS Topic (Karpenter Events):** Topic for human-readable notifications.
+- **SNS Subscription (Email):** Email subscriptions to receive SNS alerts.
+- **EventBridge Rule:** Captures EC2 spot interruption, rebalance, and maintenance events.
+- **EventBridge Target (SQS):** Sends captured events to the SQS queue.
+- **EventBridge Target (SNS):** Sends captured events to the SNS topic.
+- **SNS Topic Policy:** Allows EventBridge to publish to the SNS topic.
+
+---
+
+### AWS Load Balancer Controller (ALB)
+
+- **IAM Policy (ALB Controller):** IAM policy for the ALB controller.
+- **IAM Role (ALB Controller):** IAM role for the ALB controller using Pod Identity.
+- **IAM Policy Attachment:** Attaches the policy to the ALB controller role.
+- **Pod Identity Association:** Binds the IAM role to the ALB controller service account.
+- **Helm Release (ALB Controller):** Installs the ALB controller with VPC, subnet, and SG configuration.
+- **Security Group (ALB):** Allows inbound HTTP/HTTPS traffic to the public ALB.
 
 ## Prerequisites
 - AWS CLI
@@ -74,6 +92,18 @@ This PoC was built and validated using following versions:
 Other versions may work, but compatibility is not guaranteed.
 
 ---
+
+## Known Issues
+
+1. If you get this error while running `terrafrom plan/apply`:
+```
+│ Unable to locate chart oci://public.ecr.aws/karpenter/karpenter: unexpected status from HEAD request to
+│ https://public.ecr.aws/v2/karpenter/karpenter/manifests/1.6.2: 403 Forbidden
+```
+Run this command and try again:
+```
+aws ecr-public get-login-password --region us-east-1 | helm registry login --username AWS --password-stdin public.ecr.aws
+```
 
 ## Deployment
 

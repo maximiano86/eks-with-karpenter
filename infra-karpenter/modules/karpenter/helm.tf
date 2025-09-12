@@ -1,6 +1,3 @@
-# Get user/token to pull helm chart
-data "aws_ecrpublic_authorization_token" "token" {}
-
 # Install Karpenter using the locally downloaded .tgz chart file
 resource "helm_release" "karpenter" {
   name                = "karpenter"
@@ -22,9 +19,6 @@ resource "helm_release" "karpenter" {
       serviceAccount = {
         create = true
         name   = "karpenter"
-        annotations = {
-          "eks.amazonaws.com/role-arn" = aws_iam_role.karpenter_controller.arn
-        }
       }
       rbac = {
         create = true

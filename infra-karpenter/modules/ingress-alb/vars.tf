@@ -3,16 +3,6 @@ variable "cluster_name" {
   description = "EKS cluster name"
 }
 
-variable "oidc_provider_arn" {
-  type        = string
-  description = "OIDC provider ARN for IRSA"
-}
-
-variable "oidc_provider_url" {
-  type        = string
-  description = "OIDC provider URL for IRSA"
-}
-
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to resources"
