@@ -26,14 +26,6 @@ output "node_role_arn" {
   value = module.eks_cluster.node_role_arn
 }
 
-output "oidc_provider_arn" {
-  value = module.eks_cluster.oidc_provider_arn
-}
-
-output "oidc_provider_url" {
-  value = module.eks_cluster.oidc_provider_url
-}
-
 output "karpenter_controller_role_arn" {
   value = module.karpenter.karpenter_controller_role_arn
 }

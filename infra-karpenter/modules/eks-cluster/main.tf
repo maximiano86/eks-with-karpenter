@@ -18,6 +18,43 @@ resource "aws_eks_cluster" "this" {
   depends_on = [aws_iam_role_policy_attachment.cluster_policy]
 }
 
+resource "aws_eks_addon" "pod_identity" {
+  cluster_name = aws_eks_cluster.this.name
+  addon_name   = "eks-pod-identity-agent"
+}
+
+data "aws_ami" "eks_worker" {
+  owners      = ["602401143452"] # cuenta oficial de EKS
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["amazon-eks-node-al2023-x86_64-standard-1.33-*"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+}
+
+resource "aws_launch_template" "karpenter_nodes" {
+  name_prefix = "${var.name}-lt-"
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "optional" # adding optional due issue https://github.com/aws/karpenter-provider-aws/issues/8219
+    http_put_response_hop_limit = 2
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      "karpenter.sh/discovery" = var.name
+    }
+  }
+}
+
 resource "aws_eks_node_group" "this" {
   for_each = var.eks_node_groups
 
@@ -25,6 +62,11 @@ resource "aws_eks_node_group" "this" {
   node_group_name = "${var.name}-${each.key}"
   node_role_arn   = aws_iam_role.node.arn
   subnet_ids      = var.subnet_ids
+
+  launch_template {
+    id      = aws_launch_template.karpenter_nodes.id
+    version = "$Latest"
+  }
 
   scaling_config {
     desired_size = each.value.desired_size
@@ -44,23 +86,4 @@ resource "aws_eks_node_group" "this" {
     aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryReadOnly,
     aws_iam_role_policy_attachment.node_AmazonEKS_CNI_Policy
   ]
-}
-
-data "external" "oidc_thumbprint" {
-  program = ["bash", "${path.module}/__scripts/fetch_thumbprint.sh"]
-
-  query = {
-    cluster_name = var.name
-    region       = var.region
-  }
-
-  depends_on = [aws_eks_cluster.this]
-}
-
-resource "aws_iam_openid_connect_provider" "this" {
-  url             = data.external.oidc_thumbprint.result["oidc_url"]
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [data.external.oidc_thumbprint.result["thumbprint"]]
-
-  tags = var.tags
 }
