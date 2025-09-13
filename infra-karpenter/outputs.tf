@@ -1,34 +1,38 @@
 output "vpc_id" {
-  value = module.networking.vpc_id
+  description = "ID of the VPC where the EKS cluster and its resources are deployed"
+  value       = module.networking.vpc_id
 }
 
 output "public_subnet_ids" {
-  value = module.networking.public_subnet_ids
+  description = "List of public subnet IDs used for load balancers or public-facing components"
+  value       = module.networking.public_subnet_ids
 }
 
 output "private_subnet_ids" {
-  value = module.networking.private_subnet_ids
+  description = "List of private subnet IDs used for EKS nodes and internal workloads"
+  value       = module.networking.private_subnet_ids
 }
 
 output "eks_cluster" {
-  value = module.eks_cluster.cluster_name
+  description = "Name of the EKS cluster"
+  value       = module.eks_cluster.cluster_name
 }
 
 output "cluster_endpoint" {
-  value = module.eks_cluster.cluster_endpoint
-}
-
-output "instance_profile_name" {
-  value = module.eks_cluster.instance_profile_name
+  description = "API server endpoint of the EKS cluster"
+  value       = module.eks_cluster.cluster_endpoint
 }
 
 output "node_role_arn" {
-  value = module.eks_cluster.node_role_arn
+  description = "IAM role ARN assigned to EC2 nodes (used by Karpenter or other provisioning tools)"
+  value       = module.eks_cluster.node_role_arn
 }
 
 output "karpenter_controller_role_arn" {
-  value = module.karpenter.karpenter_controller_role_arn
+  description = "IAM role ARN used by the Karpenter controller to manage node provisioning"
+  value       = module.karpenter.karpenter_controller_role_arn
 }
+
 
 output "sqs_queue_name" {
   description = "Name of the SQS queue used by Karpenter"

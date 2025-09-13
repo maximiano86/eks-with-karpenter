@@ -55,9 +55,3 @@ resource "aws_iam_role_policy_attachment" "node_ssm" {
   role       = aws_iam_role.node.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
-
-resource "aws_iam_instance_profile" "node" {
-  name = "${var.name}-eks-node-instance-profile"
-  role = aws_iam_role.node.name
-  tags = var.tags
-}

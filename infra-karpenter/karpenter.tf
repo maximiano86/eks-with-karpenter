@@ -7,7 +7,6 @@ module "karpenter" {
 
   cluster_name            = module.eks_cluster.cluster_name
   cluster_endpoint        = module.eks_cluster.cluster_endpoint
-  instance_profile_name   = module.eks_cluster.instance_profile_name
   karpenter_chart_version = var.karpenter_chart_version
 
   sns_subscriptions = var.sns_subscriptions

@@ -14,9 +14,6 @@ resource "helm_release" "aws_load_balancer_controller" {
       serviceAccount = {
         create = true
         name   = "aws-load-balancer-controller"
-        annotations = {
-          "eks.amazonaws.com/role-arn" = aws_iam_role.alb_controller.arn
-        }
       }
       securityGroups = [
         aws_security_group.alb.id

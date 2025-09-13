@@ -1,5 +1,6 @@
 output "karpenter_controller_role_arn" {
-  value = aws_iam_role.karpenter_controller.arn
+  description = "ARN of the Karpenter Role"
+  value       = aws_iam_role.karpenter_controller.arn
 }
 
 output "sqs_queue_name" {
