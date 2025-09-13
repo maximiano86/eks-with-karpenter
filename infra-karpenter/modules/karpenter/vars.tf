@@ -8,21 +8,6 @@ variable "cluster_endpoint" {
   description = "EKS cluster API endpoint"
 }
 
-variable "instance_profile_name" {
-  type        = string
-  description = "EC2 instance profile name for Karpenter nodes"
-}
-
-# variable "oidc_provider_arn" {
-#   type        = string
-#   description = "OIDC provider ARN for IRSA"
-# }
-
-# variable "oidc_provider_url" {
-#   type        = string
-#   description = "OIDC provider URL for IRSA"
-# }
-
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to resources"

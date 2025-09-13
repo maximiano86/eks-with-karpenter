@@ -1,4 +1,4 @@
-# Install Karpenter using the locally downloaded .tgz chart file
+# Install Karpenter using Helm charts
 resource "helm_release" "karpenter" {
   name                = "karpenter"
   repository          = "oci://public.ecr.aws/karpenter"

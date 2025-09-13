@@ -41,6 +41,7 @@ variable "alb_controller" {
 }
 
 variable "eks_node_groups" {
+  description = "Map of EKS managed node groups, where each key defines a node group name and its configuration (desired size, scaling limits, and instance types)"
   type = map(object({
     desired_size   = number
     max_size       = number
@@ -49,6 +50,7 @@ variable "eks_node_groups" {
   }))
   default = {}
 }
+
 
 variable "sns_subscriptions" {
   type        = list(string)

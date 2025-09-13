@@ -13,7 +13,6 @@ module "eks_cluster" {
 
   eks_node_groups = var.eks_node_groups
 
-
   tags = {
     Component = "EKS"
   }
